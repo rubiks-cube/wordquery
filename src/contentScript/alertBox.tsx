@@ -111,7 +111,7 @@ export default function ScrollDialog({ text, onClear }) {
         aria-labelledby="scroll-dialog-title"
         aria-describedby="scroll-dialog-description"
       >
-        <DialogTitle id="scroll-dialog-title">Word</DialogTitle>
+        <DialogTitle id="scroll-dialog-title">Word Query</DialogTitle>
         <DialogContent dividers={scroll === "paper"}>
           {error && <Alert severity="error">Something went wrong!!!</Alert>}
           {loading && (
@@ -258,11 +258,16 @@ export default function ScrollDialog({ text, onClear }) {
               {data &&
                 data.gb.results[0].lexicalEntries.map((entry, i) => {
                   const label = <Chip label={entry.lexicalCategory.text} />;
-                  let def = null,
+                  let defs = [],
                     examples: any = [],
                     syn = [];
                   entry.entries[0].senses.map((sense) => {
-                    def = sense.definitions?.[0] || sense.shortDefinitions?.[0];
+                    if(sense.definitions && sense.definitions.length > 0){
+                      defs = sense.definitions;
+                    }else if(sense.shortDefinitions && sense.shortDefinitions.length>0){
+                      defs = sense.shortDefinitions
+                    }
+                   // defs = sense.definitions?.[0] || sense.shortDefinitions?.[0];
                     examples = sense.examples
                       ? sense.examples.map((ex) => ex.text)
                       : [];
@@ -279,9 +284,15 @@ export default function ScrollDialog({ text, onClear }) {
                       <span
                         style={{ marginTop: "10px", display: "inline-block" }}
                       >
-                        <i>Defintion:</i> {def}
+                        <i>Defintion:</i>
                       </span>{" "}
+                      
                       <br />
+                      {defs.map((ex, i) => (
+                        <div key={i} style={{ margin: "4px" }}>
+                          {i + 1}. {ex}
+                        </div>
+                      ))}
                       {examples.length > 0 && (
                         <span
                           style={{ marginTop: "10px", display: "inline-block" }}
@@ -291,7 +302,7 @@ export default function ScrollDialog({ text, onClear }) {
                       )}
                       {examples.map((ex, i) => (
                         <div key={i} style={{ margin: "4px" }}>
-                          #{i + 1}. {ex}
+                          {i + 1}. {ex}
                         </div>
                       ))}
                       
@@ -303,9 +314,9 @@ export default function ScrollDialog({ text, onClear }) {
                         </span>
                       )}
                       <div>
-                        {phrases.map((ex, i) => (
+                        {phrases.map((ex, i,arr) => (
                           <span style={{ display: "inline-block" }} key={i}>
-                            {ex},&nbsp;
+                            {ex}{i<arr.length-1?",":""}&nbsp;
                           </span>
                         ))}
                       </div>
@@ -318,9 +329,9 @@ export default function ScrollDialog({ text, onClear }) {
                         </span>
                       )}
                       <div>
-                        {syn.map((ex, i) => (
+                        {syn.map((ex, i,arr) => (
                           <span style={{ display: "inline-block" }} key={i}>
-                            {ex},&nbsp;
+                            {ex}{i<arr.length-1?",":""}&nbsp;
                           </span>
                         ))}
                       </div>
