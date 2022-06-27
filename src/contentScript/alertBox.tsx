@@ -29,7 +29,7 @@ function TabPanel(props) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && <Box>{children}</Box>}
     </div>
   );
 }
@@ -115,7 +115,14 @@ export default function ScrollDialog({ text, onClear }) {
         <DialogContent dividers={scroll === "paper"}>
           {error && <Alert severity="error">Something went wrong!!!</Alert>}
           {loading && (
-            <div style={{ height: "200px", width: "350px",textAlign:"center",verticalAlign:"middle" }}>
+            <div
+              style={{
+                height: "200px",
+                width: "350px",
+                textAlign: "center",
+                verticalAlign: "middle",
+              }}
+            >
               <CircularProgress />
             </div>
           )}
@@ -269,20 +276,55 @@ export default function ScrollDialog({ text, onClear }) {
                   return (
                     <React.Fragment key={i}>
                       {label} <br />
-                      <i>Defintion:</i> {def} <br />
-                      {examples.length > 0 && <i>Examples</i>}
+                      <span
+                        style={{ marginTop: "10px", display: "inline-block" }}
+                      >
+                        <i>Defintion:</i> {def}
+                      </span>{" "}
+                      <br />
+                      {examples.length > 0 && (
+                        <span
+                          style={{ marginTop: "10px", display: "inline-block" }}
+                        >
+                          <i>Examples</i>
+                        </span>
+                      )}
                       {examples.map((ex, i) => (
                         <div key={i} style={{ margin: "4px" }}>
                           #{i + 1}. {ex}
                         </div>
-                      ))} 
-                      <br />
-                      {syn.length > 0 && <i>Synonyms</i>}
+                      ))}
+                      
+                      {phrases.length > 0 && (
+                        <span
+                          style={{ marginTop: "10px", display: "inline-block" }}
+                        >
+                          <i>Phrases:</i>
+                        </span>
+                      )}
                       <div>
-                        {syn.map((ex, i) => (
-                          <span style={{"display": "inline-block"}} key={i}>{ex},&nbsp;</span>
+                        {phrases.map((ex, i) => (
+                          <span style={{ display: "inline-block" }} key={i}>
+                            {ex},&nbsp;
+                          </span>
                         ))}
                       </div>
+                     
+                      {syn.length > 0 && (
+                        <span
+                          style={{ marginTop: "10px", display: "inline-block" }}
+                        >
+                          <i>Synonyms:</i>
+                        </span>
+                      )}
+                      <div>
+                        {syn.map((ex, i) => (
+                          <span style={{ display: "inline-block" }} key={i}>
+                            {ex},&nbsp;
+                          </span>
+                        ))}
+                      </div>
+                      <br />
                     </React.Fragment>
                   );
                 })}
