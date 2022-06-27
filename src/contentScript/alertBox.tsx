@@ -258,54 +258,88 @@ export default function ScrollDialog({ text, onClear }) {
               {data &&
                 data.gb.results[0].lexicalEntries.map((entry, i) => {
                   const label = <Chip label={entry.lexicalCategory.text} />;
-                  let defs = [],
-                    examples: any = [],
-                    syn = [];
-                  entry.entries[0].senses.map((sense) => {
-                    if(sense.definitions && sense.definitions.length > 0){
+
+                  const senses = entry.entries[0].senses.map((sense) => {
+                    let defs = [],
+                      examples: any = [],
+                      syn = [];
+                    if (sense.definitions && sense.definitions.length > 0) {
                       defs = sense.definitions;
-                    }else if(sense.shortDefinitions && sense.shortDefinitions.length>0){
-                      defs = sense.shortDefinitions
+                    } else if (
+                      sense.shortDefinitions &&
+                      sense.shortDefinitions.length > 0
+                    ) {
+                      defs = sense.shortDefinitions;
                     }
-                   // defs = sense.definitions?.[0] || sense.shortDefinitions?.[0];
+                    // defs = sense.definitions?.[0] || sense.shortDefinitions?.[0];
                     examples = sense.examples
                       ? sense.examples.map((ex) => ex.text)
                       : [];
                     syn = sense.synonyms
                       ? sense.synonyms.map((ex) => ex.text)
                       : [];
+                    return { examples, defs, syn };
                   });
                   const phrases = entry.phrases
                     ? entry.phrases.map((x) => x.text)
                     : [];
+                  
                   return (
                     <React.Fragment key={i}>
                       {label} <br />
-                      <span
-                        style={{ marginTop: "10px", display: "inline-block" }}
-                      >
-                        <i>Defintion:</i>
-                      </span>{" "}
-                      
+                      {senses.map((sense,i) => (
+                        <React.Fragment key={i}>
+                          <span style={{marginTop:"10px",display:"inline-block"}}><strong>#{i+1}</strong></span><br/>
+                          <span
+                            style={{
+                              marginTop: "10px",
+                              display: "inline-block",
+                            }}
+                          >
+                            <i>Defintion:</i>
+                          </span>{" "}
+                          <br />
+                          {sense.defs.map((ex, i) => (
+                            <div key={i} style={{ margin: "4px" }}>
+                              {i + 1}. {ex}
+                            </div>
+                          ))}
+                          {sense.examples.length > 0 && (
+                            <span
+                              style={{
+                                marginTop: "10px",
+                                display: "inline-block",
+                              }}
+                            >
+                              <i>Examples</i>
+                            </span>
+                          )}
+                          {sense.examples.map((ex, i) => (
+                            <div key={i} style={{ margin: "4px" }}>
+                              {i + 1}. {ex}
+                            </div>
+                          ))}
+                          {sense.syn.length > 0 && (
+                            <span
+                              style={{
+                                marginTop: "10px",
+                                display: "inline-block",
+                              }}
+                            >
+                              <i>Synonyms:</i>
+                            </span>
+                          )}
+                          <div>
+                            {sense.syn.map((ex, i, arr) => (
+                              <span style={{ display: "inline-block" }} key={i}>
+                                {ex}
+                                {i < arr.length - 1 ? "," : ""}&nbsp;
+                              </span>
+                            ))}
+                          </div>
+                        </React.Fragment>
+                      ))}
                       <br />
-                      {defs.map((ex, i) => (
-                        <div key={i} style={{ margin: "4px" }}>
-                          {i + 1}. {ex}
-                        </div>
-                      ))}
-                      {examples.length > 0 && (
-                        <span
-                          style={{ marginTop: "10px", display: "inline-block" }}
-                        >
-                          <i>Examples</i>
-                        </span>
-                      )}
-                      {examples.map((ex, i) => (
-                        <div key={i} style={{ margin: "4px" }}>
-                          {i + 1}. {ex}
-                        </div>
-                      ))}
-                      
                       {phrases.length > 0 && (
                         <span
                           style={{ marginTop: "10px", display: "inline-block" }}
@@ -314,28 +348,13 @@ export default function ScrollDialog({ text, onClear }) {
                         </span>
                       )}
                       <div>
-                        {phrases.map((ex, i,arr) => (
+                        {phrases.map((ex, i, arr) => (
                           <span style={{ display: "inline-block" }} key={i}>
-                            {ex}{i<arr.length-1?",":""}&nbsp;
+                            {ex}
+                            {i < arr.length - 1 ? "," : ""}&nbsp;
                           </span>
                         ))}
                       </div>
-                     
-                      {syn.length > 0 && (
-                        <span
-                          style={{ marginTop: "10px", display: "inline-block" }}
-                        >
-                          <i>Synonyms:</i>
-                        </span>
-                      )}
-                      <div>
-                        {syn.map((ex, i,arr) => (
-                          <span style={{ display: "inline-block" }} key={i}>
-                            {ex}{i<arr.length-1?",":""}&nbsp;
-                          </span>
-                        ))}
-                      </div>
-                      <br />
                     </React.Fragment>
                   );
                 })}
