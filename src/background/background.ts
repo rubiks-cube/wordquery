@@ -6,12 +6,14 @@ chrome.runtime.onInstalled.addListener(() => {
     id:"wordquerycm",
     contexts:["page","selection"]
   })
-  chrome.contextMenus.onClicked.addListener(async e=>{
-    console.log(e.selectionText);
-    const x= await getCurrentTab()
-    console.log(x)
-    chrome.tabs.sendMessage(x.id, e.selectionText)
-  })
+  
+})
+
+chrome.contextMenus.onClicked.addListener(async e=>{
+  console.log(e.selectionText);
+  const x= await getCurrentTab()
+  console.log(x)
+  chrome.tabs.sendMessage(x.id, e.selectionText)
 })
 
 async function getCurrentTab() {
