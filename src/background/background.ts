@@ -1,5 +1,8 @@
 // TODO: background script
 chrome.runtime.onInstalled.addListener(() => {
+  chrome.storage.sync.set({lang:"ru"},()=>{
+    console.log(99)
+   })
   // TODO: on installed function
   chrome.contextMenus.create({
     title: "WordQuery",
