@@ -1,7 +1,7 @@
 {
-  "name": "React Extension",
-  "description": "Chrome Extension in React!",
-  "version": "1.0.0",
+  "name": "Word Query",
+  "description": "Extension for searching word meaning",
+  "version": "0.0.1",
   "manifest_version": 3,
   "icons": {
     "16": "favicon.png",
@@ -10,7 +10,7 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "React Extension",
+    "default_title": "Word Query",
     "default_icon": "favicon.png"
   },
   "permissions": ["storage","contextMenus"],

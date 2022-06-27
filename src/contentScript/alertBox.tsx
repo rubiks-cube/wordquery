@@ -3,7 +3,8 @@ import Button from "@mui/material/Button";
 import Dialog, { DialogProps } from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
+import Alert from "@mui/material/Alert";
+
 import DialogTitle from "@mui/material/DialogTitle";
 import { IconButton, CircularProgress } from "@mui/material";
 import { VolumeUp } from "@mui/icons-material";
@@ -37,6 +38,7 @@ export default function ScrollDialog({ text, onClear }) {
   const [open, setOpen] = React.useState(true);
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
   const [scroll, setScroll] = React.useState<DialogProps["scroll"]>("paper");
   const [value, setValue] = React.useState(0);
   const [age, setAge] = React.useState("");
@@ -72,13 +74,20 @@ export default function ScrollDialog({ text, onClear }) {
   React.useEffect(() => {
     if (text) {
       setLoading(true);
+      setError(false);
       fetch("https://hidden-eyrie-99411.herokuapp.com/wordSearch?word=" + text)
         .then((res) => res.json())
         .then((r) => {
           console.log(r);
+          if (r.error) {
+            setError(true);
+            setLoading(false);
+            return;
+          }
           setData(r);
           setLoading(false);
-        });
+        })
+        .catch((e) => setError(true));
     }
   }, [text]);
 
@@ -104,7 +113,12 @@ export default function ScrollDialog({ text, onClear }) {
       >
         <DialogTitle id="scroll-dialog-title">Word</DialogTitle>
         <DialogContent dividers={scroll === "paper"}>
-          {loading && <CircularProgress />}
+          {error && <Alert severity="error">Something went wrong!!!</Alert>}
+          {loading && (
+            <div style={{ height: "200px", width: "350px",textAlign:"center",verticalAlign:"middle" }}>
+              <CircularProgress />
+            </div>
+          )}
           {!loading && (
             <div
               id="scroll-dialog-description"
@@ -234,43 +248,44 @@ export default function ScrollDialog({ text, onClear }) {
                   </>
                 )}
               </TabPanel>
-              {data && data.gb.results[0].lexicalEntries.map((entry, i) => {
-                const label = <Chip label={entry.lexicalCategory.text} />;
-                let def = null,
-                  examples: any = [],
-                  syn = [];
-                entry.entries[0].senses.map((sense) => {
-                  def = sense.definitions?.[0] || sense.shortDefinitions?.[0];
-                  examples = sense.examples
-                    ? sense.examples.map((ex) => ex.text)
+              {data &&
+                data.gb.results[0].lexicalEntries.map((entry, i) => {
+                  const label = <Chip label={entry.lexicalCategory.text} />;
+                  let def = null,
+                    examples: any = [],
+                    syn = [];
+                  entry.entries[0].senses.map((sense) => {
+                    def = sense.definitions?.[0] || sense.shortDefinitions?.[0];
+                    examples = sense.examples
+                      ? sense.examples.map((ex) => ex.text)
+                      : [];
+                    syn = sense.synonyms
+                      ? sense.synonyms.map((ex) => ex.text)
+                      : [];
+                  });
+                  const phrases = entry.phrases
+                    ? entry.phrases.map((x) => x.text)
                     : [];
-                  syn = sense.synonyms
-                    ? sense.synonyms.map((ex) => ex.text)
-                    : [];
-                });
-                const phrases = entry.phrases
-                  ? entry.phrases.map((x) => x.text)
-                  : [];
-                return (
-                  <React.Fragment key={i}>
-                    {label} <br />
-                    <i>Defintion:</i> {def} <br />
-                    {examples.length > 0 && <i>Examples</i>}
-                    {examples.map((ex, i) => (
-                      <div key={i} style={{ margin: "4px" }}>
-                        {ex}
+                  return (
+                    <React.Fragment key={i}>
+                      {label} <br />
+                      <i>Defintion:</i> {def} <br />
+                      {examples.length > 0 && <i>Examples</i>}
+                      {examples.map((ex, i) => (
+                        <div key={i} style={{ margin: "4px" }}>
+                          #{i + 1}. {ex}
+                        </div>
+                      ))} 
+                      <br />
+                      {syn.length > 0 && <i>Synonyms</i>}
+                      <div>
+                        {syn.map((ex, i) => (
+                          <span style={{"display": "inline-block"}} key={i}>{ex},&nbsp;</span>
+                        ))}
                       </div>
-                    ))}
-                    <br />
-                    {syn.length > 0 && <i>Synonyms</i>}
-                    <div>
-                      {syn.map((ex, i) => (
-                        <span key={i}>{ex}, </span>
-                      ))}
-                    </div>
-                  </React.Fragment>
-                );
-              })}
+                    </React.Fragment>
+                  );
+                })}
             </div>
           )}
         </DialogContent>
