@@ -1,7 +1,7 @@
 // TODO: content script
 import React,{useState,useEffect} from 'react'
 import ReactDOM from 'react-dom'
-import AlertBox from "./alertBox";
+import DialogBox from "./dialogBox";
 
 const App: React.FC<{}> = () => {
   const [text,setText ] = useState<string|null>(null)
@@ -13,7 +13,7 @@ const App: React.FC<{}> = () => {
   
  },[])
   return (<>
-   {text && <AlertBox text={text} onClear={()=>setText(null)}/>}
+   {text && <DialogBox text={text} onClear={()=>setText(null)}/>}
    </>
   )
 } 

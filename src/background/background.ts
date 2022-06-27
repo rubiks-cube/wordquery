@@ -15,6 +15,11 @@ chrome.contextMenus.onClicked.addListener(async e=>{
   console.log(x)
   chrome.tabs.sendMessage(x.id, e.selectionText)
 })
+chrome.runtime.onMessage.addListener((request) => {
+  if (request === "showOptions") {
+    chrome.runtime.openOptionsPage();
+  }
+});
 
 async function getCurrentTab() {
   let queryOptions = { active: true, lastFocusedWindow: true };
